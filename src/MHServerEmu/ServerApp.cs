@@ -20,6 +20,8 @@ using MHServerEmu.Games.Network.InstanceManagement;
 using MHServerEmu.Grouping;
 using MHServerEmu.Leaderboards;
 using MHServerEmu.PlayerManagement;
+using System.Reflection; 
+using System.Data.SQLite; 
 
 namespace MHServerEmu
 {
@@ -42,6 +44,29 @@ namespace MHServerEmu
 
     public class ServerApp
     {
+        // Add a static constructor to handle the native library resolver.
+        static ServerApp()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                Assembly sqliteAssembly = typeof(SQLiteConnection).Assembly;
+
+                NativeLibrary.SetDllImportResolver(sqliteAssembly, (libraryName, assembly, searchPath) =>
+                {
+                    if (libraryName == "__Internal")
+                    {
+                        const string nativeLibraryName = "SQLite.Interop.dll";
+
+                        IntPtr handle;
+                        if (NativeLibrary.TryLoad(nativeLibraryName, assembly, searchPath, out handle))
+                        {
+                            return handle;
+                        }
+                    }
+                    return IntPtr.Zero;
+                });
+            }
+        }
         private enum State
         {
             Created,
@@ -254,3 +279,4 @@ namespace MHServerEmu
         }
     }
 }
+

@@ -45,6 +45,9 @@
     <Reference Include="Google.ProtocolBuffers">
       <HintPath>..\..\dep\protobuf-csharp\Google.ProtocolBuffers.dll</HintPath>
     </Reference>
+    <Reference Include="System.Data.SQLite">
+      <HintPath>..\..\dep\System.Data.SQLite\System.Data.SQLite.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>
